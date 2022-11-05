@@ -6,13 +6,14 @@ import (
 )
 
 type Products struct {
-	ID	 		int64  `json:"id"`
-	Kode 		string `json:"kode"`
+	ID	 		int64  `json:"-"`
+	Kode 		string `json:"kode,omitempty"`
 	Nama  		string `json:"nama"`
 	Harga  		string `json:"harga"`
+	TotalOrder  string `json:"total_order,omitempty"`
 	Gambar     	string `json:"gambar"`
-	FlagReady  	string `json:"flag_ready"`
-	FlagAktif   string `json:"flag_aktif"`
+	FlagReady  	string `json:"flag_ready,omitempty"`
+	FlagAktif   string `json:"flag_aktif,omitempty"`
 	UUID        string `json:"uuid"`
 }
 
@@ -112,6 +113,35 @@ func StoreProduct(kode string, nama string, gambar string) (Response, error) {
 	res.Data = map[string]int64{
 		"last_inserted_id": lastInsertedId,
 	}
+
+	return res, nil
+}
+
+func FetchProductRecomendation()(Response, error){
+	var obj Products
+	var arrobj []Products
+	var res Response
+	
+	con := db.CreateCon()
+
+	stmt := "SELECT sum(b.jumlah) AS total_order, p.nama, p.gambar, p.harga, p.kode, p.uuid from baskets b join products p on p.id = b.id_product Where p.flag_aktif = TRUE AND b.flag_order = TRUE GROUP BY b.id_product ORDER BY total_order DESC limit 6;"
+
+	rows, err := con.Query(stmt)
+	if err != nil{
+		return res, err
+	}
+
+	for rows.Next(){
+		err = rows.Scan(&obj.TotalOrder, &obj.Nama, &obj.Gambar, &obj.Harga, &obj.Kode, &obj.UUID)
+		if err != nil {
+			return res, err
+		}
+		arrobj = append(arrobj, obj)
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Success"
+	res.Data = arrobj
 
 	return res, nil
 }

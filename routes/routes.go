@@ -28,6 +28,7 @@ func Init() *echo.Echo{
 	e.GET("/products", controllers.FetchAllProduct)
 	e.GET("/products/:uuid", controllers.FetchProductByUuid)
 	e.POST("/products", controllers.StoreProduct)
+	e.GET("/products/recomendation", controllers.FetchProductRecomendation)
 
 	e.GET("/basket", controllers.FetchActiveBasket)
 	e.POST("/basket/:uuid_product", controllers.StoreProductToBasket)
