@@ -19,7 +19,7 @@ func FetchAllEmployee() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * from employee"
+	sqlStatement := "SELECT id, nama, alamat, telepon from employee"
 
 	rows, err := con.Query(sqlStatement)
 	if err != nil {

@@ -4,7 +4,7 @@
 
 **Create database 'myfood':**
 ```
-CREATE DATABASE userdb;
+CREATE DATABASE myfood;
 ```
 
 ```
